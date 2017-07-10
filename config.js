@@ -1,8 +1,8 @@
 exports.DATABASE_URL = process.env.DATABASE_URL || 
                        global.DATABASE_URL ||
-                      'mongodb://localhost/soupData'; 
+                      'mongodb://localhost/soupdata1'; 
 exports.TEST_DATABASE_URL = (
 							process.env.TEST_DATABASE_URL ||
-							'mongodb://localhost/test-soupData');
+							'mongodb://localhost/test-soupdata1');
 
 exports.PORT = process.env.PORT || 8080;
