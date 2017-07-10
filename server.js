@@ -6,7 +6,12 @@ var mongoose = require('mongoose')
 mongoose.Promise = global.Promise;
 
 var {PORT, DATABASE_URL} = require('./config');
-var {Expenses} = require('./models'); //NEED TO NAME THIS DB
+var {SoupData} = require('./models');
+
+var app = express();
+app.use(express.static(__dirname + '/public')); //??????allows the server where to look in public for templates
+app.use(morgan('common'));
+app.use(bodyParser.json());
 
 
  app.use((req, res, next) => {
@@ -15,15 +20,51 @@ var {Expenses} = require('./models'); //NEED TO NAME THIS DB
   next();
 });
 
- app.get('/api/*', (req, res) => {
-   res.json({hello: "yes it is me"});
- });
+//write a get request to get the first 5 to preview what it looks like
+
+app.get("/soupKitchens", function(request, response){
+	console.log("querying the database to preview data in it");
+	SoupData
+		.find()
+		.limit(5)
+		.exec()
+		.then(function(kitchens){
+			response.json({kitchens: kitchens.map(
+				(kitchen) =>
+				kitchen.apiReturn())
+				});
+			})
+		.catch(error =>{
+			console.error(error);
+			response.status(500).json({message:"error getting that data"});
+		});
+	});
+
+
+//using NearSphere, return the closest 5 kitchens
+
+app.get("/soupKitchensNearest", function(request,response){
+	const {lat, long} = request.query;
+
+	SoupData
+		.find({
+			loc: {
+				$nearSphere : [long, lat], $maxDistance:0.3 } //distance in radians
+			}
+		)
+		.limit(5)
+		.exec()
+		.then(kitchen => response.json(kitchen.apiReturn()))
+
+		.catch(error => {
+			console.error(500).json({message: "Get Error by Id: Internal Server Error"})
+		});
+	});
+
 
 app.use("*", function(request,response){
 	response.status(404).json({message: "Not Found"});
 	});
-
-
 
  var server;
 
