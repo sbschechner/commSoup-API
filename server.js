@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 
 app.get("/soupKitchens", function(request, response){
 	console.log("querying the database to preview data in it");
-	SoupData
+	SoupData	
 		.find()
 		.limit(5)
 		.exec()
@@ -45,11 +45,18 @@ app.get("/soupKitchens", function(request, response){
 
 app.get("/soupKitchensNearest", function(request,response){
 	const {lat, long} = request.query;
+	var floatLat = parseFloat(lat)
+	var floatLong =parseFloat(long)
+	console.log(long);
+	console.log(floatLong);
+	console.log(typeof(floatLat));
+	console.log(typeof(floatLong));
+	console.log("looking to find the nearest 5 locations to user");
 
 	SoupData
 		.find({
-			loc: {
-				$nearSphere : [long, lat], $maxDistance:0.3 } //distance in radians
+			location : {
+				"$nearSphere" : [floatLong, floatLat], $maxDistance:0.3 } //distance in radians
 			}
 		)
 		.limit(5)
@@ -57,7 +64,7 @@ app.get("/soupKitchensNearest", function(request,response){
 		.then(kitchen => response.json(kitchen.apiReturn()))
 
 		.catch(error => {
-			console.error(500).json({message: "Get Error by Id: Internal Server Error"})
+			console.error(500).json({message: "Get Error by Id: Internal Server Error - make sure to pass lat and long"})
 		});
 	});
 

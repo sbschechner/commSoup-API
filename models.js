@@ -22,7 +22,7 @@ var soupDataSchema = mongoose.Schema({ //NEED TO CREATE based on the json file..
 	FIELD19: {type: String},
 	FIELD20: {type: String},
 	FIELD21: {type: String},
-});
+}, {collection: 'kitchens'});
 
 
 soupDataSchema.methods.apiReturn = function(){
@@ -40,6 +40,7 @@ soupDataSchema.methods.apiReturn = function(){
 		hours:this.FIELD10,
 		lat:this.FIELD11,
 		long:this.FIELD12,
+		location :[this.FIELD11, this.FIELD12], //for mongo's $nearSphere
 		acc_score:this.FIELD13,
 		acc_type:this.FIELD14,
 		street_num:this.FIELD15,
