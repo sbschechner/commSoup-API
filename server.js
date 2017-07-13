@@ -55,8 +55,8 @@ app.get("/soupKitchensNearest", function(request,response){
 
 	SoupData
 		.find({
-			location : {
-				"$nearSphere" : [floatLong, floatLat], $maxDistance:0.3 } //distance in radians
+			FIELD22 : {
+				"$nearSphere" : [floatLong, floatLat], $maxDistance: 0.1 } //distance in radians
 			}
 		)
 		.limit(5)
