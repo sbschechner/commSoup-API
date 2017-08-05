@@ -26,7 +26,6 @@ app.get("/soupKitchens", function(request, response){
 	console.log("querying the database to preview data in it");
 	SoupData	
 		.find()
-		.limit(5)
 		.exec()
 		.then(function(kitchens){
 			response.json({kitchens: kitchens.map(
@@ -46,29 +45,40 @@ app.get("/soupKitchens", function(request, response){
 app.get("/soupKitchensNearest", function(request,response){
 	const {lat, long} = request.query;
 	var floatLat = parseFloat(lat)
+	var exLat = -73.90218;
+	var exLong = 40.74;
 	var floatLong =parseFloat(long)
 	console.log(long);
-	console.log(floatLong);
-	console.log(typeof(floatLat));
-	console.log(typeof(floatLong));
+	console.log("long is" + floatLong);
 	console.log("looking to find the nearest 5 locations to user");
 
+
 	SoupData
-		.find({
-			FIELD22 : {
-				"$nearSphere" : [floatLong, floatLat], $maxDistance: 0.1 } //distance in radians
-			}
-		)
+		.near( 'FIELD22', {
+			center: [floatLong, floatLat],
+			maxDistance : 10000
+		
+		})
 		.limit(5)
-		.exec()
-		.then(kitchen => response.json(kitchen.apiReturn()))
+		.exec(function(response){console.log(response)});
+		/*.then(kitchen => response.json(kitchen.apiReturn()))
 
 		.catch(error => {
 			console.error(500).json({message: "Get Error by Id: Internal Server Error - make sure to pass lat and long"})
-		});
+		});*/
 	});
 
-
+//.exec(function(err){ console.log(err); }); is great to print the monog errs)
+/*app.get("/expenseTracker/:id", function(request,response){
+	Expenses
+		.findById(request.params.id)
+		.exec()
+		.then(expense => response.json(expense.apiReturn()))
+		.catch(error => {
+			console.error(500).json({message: "Get Error by Id: Internal Server Error"})
+		});
+	});
+*/
 app.use("*", function(request,response){
 	response.status(404).json({message: "Not Found"});
 	});
