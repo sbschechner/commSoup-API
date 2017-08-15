@@ -40,40 +40,13 @@ app.get("/soupKitchens", function(request, response){
 	});
 
 
-//using NearSphere, return the closest 5 kitchens
-
-app.get("/soupKitchensNearest", function(request,response){
-	const {lat, long} = request.query;
-	var floatLat = parseFloat(lat)
-	var exLat = -73.90218;
-	var exLong = 40.74;
-	var floatLong =parseFloat(long)
-	console.log(long);
-	console.log("long is" + floatLong);
-	console.log("looking to find the nearest 5 locations to user");
-
-
-	SoupData
-		.near( 'FIELD22', {
-			center: [floatLong, floatLat],
-			maxDistance : 10000
-		
-		})
-		.limit(5)
-		.exec(function(response){console.log(response)});
-		/*.then(kitchen => response.json(kitchen.apiReturn()))
-
-		.catch(error => {
-			console.error(500).json({message: "Get Error by Id: Internal Server Error - make sure to pass lat and long"})
-		});*/
-	});
-
-//.exec(function(err){ console.log(err); }); is great to print the monog errs)
-
 app.get("/soupKitchensSpecific", function(request,response){
+	const{kitchId} = request.query;
+	var id = require('mongodb').ObjectID(kitchId);
+	console.log(kitchId);
+	console.log(id);
 	SoupData
-		const{kitchId} = request.query
-		.findById(kitchId)
+		.findById(id)
 		.exec()
 		.then(kitchen => response.json(kitchen.apiReturn()))
 		.catch(error => {
